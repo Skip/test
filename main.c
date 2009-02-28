@@ -38,14 +38,14 @@ const char *stop_command1[TOTAL_COMMANDS] = {
 
 const char *stop_command2[TOTAL_COMMANDS] = {
     "&downloaded=0&left=0&compact=1&numwant=0&key=624878738&event=stopped&info_hash=%8dP%dbc*%1aN%12%ac%fe*c%04%eb%94%60%8e%caa%ce HTTP/1.1\n" \
-    "User-Agent: vuze/1.2.1\n" \
+    "User-Agent: git/1.2.1\n" \
     "Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n" \
     "Accept-Encoding: x-gzip, x-deflate, gzip, deflate\n" \
     "Host: gt.git.org\n" \
     "Connection: Keep-Alive\n\n",
     
     "&downloaded=0&left=0&compact=1&numwant=0&key=454186080&event=stopped&info_hash=%0aQ0'%7f%06j%91%3b-%8e%b9%ab~%ca%e2%96ej%91 HTTP/1.1\n" \
-    "User-Agent: vuze/1.2.1\n" \
+    "User-Agent: git/1.2.1\n" \
     "Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n" \
     "Accept-Encoding: x-gzip, x-deflate, gzip, deflate\n" \
     "Host: gt.git.org\n" \
