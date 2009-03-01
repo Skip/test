@@ -15,13 +15,13 @@
 #define SERVER_PORT     "80"
 #define LOG_FILE        "/tmp/main.log"
 
-const char *start_command[TOTAL_COMMANDS] = { 
+const char *start_command[TOTAL_COMMANDS] = {
     "GET /announce.php?uk=1234567890&&peer_id=-KT2280-1eMLTnp9UtQR&port=6881&uploaded=0&downloaded=0&left=0&compact=1&numwant=100&key=1237450489&event=started&info_hash=%8dP%dbc*%1aN%12%ac%fe*c%04%eb%94%60%8e%caa%ce HTTP/1.1\n" \
     "User-Agent: git/1.2.1\n" \
     "Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n" \
     "Accept-Encoding: x-gzip, x-deflate, gzip, deflate\n" \
     "Host: gt.git.org\n" \
-    "Connection: Keep-Alive\n\n", 
+    "Connection: Keep-Alive\n\n",
 
     "GET /announce.php?uk=0987654321&&peer_id=-KT2280-6RvFOwrayU3V&port=6881&uploaded=0&downloaded=0&left=0&compact=1&numwant=100&key=454186080&event=started&info_hash=%0aQ0'%7f%06j%91%3b-%8e%b9%ab~%ca%e2%96ej%91 HTTP/1.1\n" \
     "User-Agent: git/1.2.1\n" \
@@ -43,7 +43,7 @@ const char *stop_command2[TOTAL_COMMANDS] = {
     "Accept-Encoding: x-gzip, x-deflate, gzip, deflate\n" \
     "Host: gt.git.org\n" \
     "Connection: Keep-Alive\n\n",
-    
+
     "&downloaded=0&left=0&compact=1&numwant=0&key=454186080&event=stopped&info_hash=%0aQ0'%7f%06j%91%3b-%8e%b9%ab~%ca%e2%96ej%91 HTTP/1.1\n" \
     "User-Agent: git/1.2.1\n" \
     "Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n" \
@@ -91,18 +91,18 @@ static int make_tmp_file_name(char *tmp_file_name)
 static int send_command_to_server(const char *tmp_file_name)
 {
     char shell_command[250];
+    int ret = 0;
 
     memset(shell_command, 0, 250);
-    snprintf(shell_command, 250, "cat %s | telnet %s %s", 
+    snprintf(shell_command, 250, "cat %s | telnet %s %s",
             tmp_file_name, SERVER_ADDRESS, SERVER_PORT);
     if (system(shell_command) == -1) {
-	    printf("%s error\n", __FUNCTION__);
-        unlink(tmp_file_name);
-        return -1;
+        printf("%s error\n", __FUNCTION__);
+        ret = -1;
     }
     unlink(tmp_file_name);
 
-    return 0;
+    return ret;
 }
 
 static void log_data(int uploaded, int delay, int record)
@@ -118,9 +118,9 @@ static void log_data(int uploaded, int delay, int record)
     }
     time(&systime);
     _time = localtime(&systime);
-    fprintf(log_file, "%02d:%02d:%02d  %02d:%02d:%02d  -  uploaded %2d Mb in %2d mins for %2d record\n", 
-            _time->tm_hour, _time->tm_min, _time->tm_sec, 
-            _time->tm_mday, _time->tm_mon + 1, _time->tm_year - 100, 
+    fprintf(log_file, "%02d:%02d:%02d  %02d:%02d:%02d  -  uploaded %2d Mb in %2d mins for %2d record\n",
+            _time->tm_hour, _time->tm_min, _time->tm_sec,
+            _time->tm_mday, _time->tm_mon + 1, _time->tm_year - 100,
             uploaded, delay, record);
     fclose(log_file);
 }
@@ -138,8 +138,8 @@ static void log_message(const char *msg)
     }
     time(&systime);
     _time = localtime(&systime);
-    fprintf(log_file, "%02d:%02d:%02d  %02d:%02d:%02d  -  %s\n", 
-            _time->tm_hour, _time->tm_min, _time->tm_sec, 
+    fprintf(log_file, "%02d:%02d:%02d  %02d:%02d:%02d  -  %s\n",
+            _time->tm_hour, _time->tm_min, _time->tm_sec,
             _time->tm_mday, _time->tm_mon + 1, _time->tm_year - 100, msg);
     fclose(log_file);
 }
@@ -149,7 +149,7 @@ static void increment_upload(void)
     char tmp_file_name[19] = "/tmp/testXXXXXX";
     FILE *command_file = NULL;
     int file_id, uploaded = 5, delay, record, remainder;
-    
+
 
     record = get_random_byte() % TOTAL_COMMANDS; /* choose record */
 
@@ -193,7 +193,7 @@ static void increment_upload(void)
         unlink(tmp_file_name);
         goto increment_upload_quit;
     }
-    fprintf(command_file, "%s%d%s", stop_command1[record], 
+    fprintf(command_file, "%s%d%s", stop_command1[record],
             uploaded, stop_command2[record]);
     fclose(command_file);
 
@@ -220,12 +220,12 @@ int main(void)
     int delay;
 
     memset(&sact, 0, sizeof(sact));
-    sact.sa_handler = sigint_handler;
+    sact.sa_handler = (void *)(int)sigint_handler;
     sigaction(SIGINT, &sact, NULL);
 
     do {
         increment_upload();
-        
+
         if (!program_exit) {
             /* make random delay: 5 min <= delay <= 15 mins */
             delay = get_random_byte();
